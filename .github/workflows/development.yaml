@@ -4,20 +4,25 @@ on:
     branches:
       - "main"
 jobs:
+  update:
+    name: Update
+    runs-on: self-hosted
+    steps:
+      - name: update local files
+      - run: cd wb-web-app
+      - run: git pull
   build:
     name: Build
     runs-on: self-hosted
     steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.DEVSERVER_HOST }}
-          username: ${{ secrets.DEVSERVER_USERNAME }}
-          password: ${{ secrets.DEVSERVER_PASSWORD }}
-          port: ${{ secrets.DEVSERVER_PORT }}
-          script: |
-            cd wb-web-app
-            git pull
-            yarn install
-            yarn build
-            echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
+      - name: Build react project to static files
+      - run: cd wb-web-app
+      - run: yarn install
+      - run: yarn build
+  deploy:
+    name: Deploy
+    runs-on: self-hosted
+    steps:
+      - name: Restarting NGINX with new static files
+      - run: cd wb-web-app
+      - run: echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
