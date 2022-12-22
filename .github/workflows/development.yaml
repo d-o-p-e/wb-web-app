@@ -20,4 +20,4 @@ jobs:
             git pull
             yarn install
             yarn build
-            echo ${{ secrets.PASSWORD }} | sudo -S systemctl restart nginx
+            echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
