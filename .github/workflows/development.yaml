@@ -1,0 +1,21 @@
+name: remote SSH test
+on: [push]
+jobs:
+  build:
+      name: Build
+      runs-on: ubuntu-latest
+      steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+          cd wb-web-app
+          git pull
+          yarn install
+          yarn build
+          sudo systemctl restart nginx
+          
