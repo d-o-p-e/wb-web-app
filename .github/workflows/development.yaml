@@ -13,6 +13,7 @@ jobs:
           cd wb-web-app
           git pull
   build:
+    needs: update
     name: Build
     runs-on: self-hosted
     steps:
@@ -22,6 +23,7 @@ jobs:
           yarn install
           yarn build
   deploy:
+    needs: build
     name: Deploy
     runs-on: self-hosted
     steps:
