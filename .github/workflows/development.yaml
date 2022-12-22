@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: update local files
         run: |
-          cd wb-web-app
+          cd /home/yany/wb-web-app
           git pull
   build:
     needs: update
@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Build react project to static files
         run: |
-          cd wb-web-app
+          cd /home/yany/wb-web-app
           yarn install
           yarn build
   deploy:
@@ -29,5 +29,5 @@ jobs:
     steps:
       - name: Restarting NGINX with new static files
         run: |
-          cd wb-web-app
+          cd /home/yany/wb-web-app
           echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
