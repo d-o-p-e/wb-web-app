@@ -9,20 +9,23 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: update local files
-      - run: cd wb-web-app
-      - run: git pull
+        run: |
+          cd wb-web-app
+          git pull
   build:
     name: Build
     runs-on: self-hosted
     steps:
       - name: Build react project to static files
-      - run: cd wb-web-app
-      - run: yarn install
-      - run: yarn build
+        run: |
+          cd wb-web-app
+          yarn install
+          yarn build
   deploy:
     name: Deploy
     runs-on: self-hosted
     steps:
       - name: Restarting NGINX with new static files
-      - run: cd wb-web-app
-      - run: echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
+        run: |
+          cd wb-web-app
+          echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
