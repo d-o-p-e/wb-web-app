@@ -1,0 +1,36 @@
+name: Build Production Web App
+on: 
+  pull_request:
+    types:
+    - closed
+    branches:
+    - production
+jobs:
+  if_merged:
+    name: Check if the pull request was merged
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    steps:
+    - run: |
+      echo PR WAS MERGED TO PRODUCTION. START DEPLOYMENT.
+  update:
+    needs: if_merged
+    name: Update
+    runs-on: self-hosted
+    steps:
+      - name: update local files
+        run: |
+          cd /home/yany/wb-web-app
+          git pull
+  build:
+    needs: update
+    name: Build
+    runs-on: self-hosted
+    steps:
+      - name: Build react project to static files
+        run: |
+          cd /home/yany/wb-web-app
+          git checkout production
+          yarn install
+          yarn build
+          cp -R /home/yany/wb-web-app/build/* /home/yany/wb-core-service/src/main/resources
