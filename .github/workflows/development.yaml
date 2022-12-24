@@ -1,0 +1,33 @@
+name: Development Server Deployment
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  update:
+    name: Update
+    runs-on: self-hosted
+    steps:
+      - name: update local files
+        run: |
+          cd /home/yany/wb-web-app
+          git pull
+  build:
+    needs: update
+    name: Build
+    runs-on: self-hosted
+    steps:
+      - name: Build react project to static files
+        run: |
+          cd /home/yany/wb-web-app
+          yarn install
+          yarn build
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: self-hosted
+    steps:
+      - name: Restarting NGINX with new static files
+        run: |
+          cd /home/yany/wb-web-app
+          echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
