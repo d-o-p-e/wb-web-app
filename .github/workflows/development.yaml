@@ -20,6 +20,7 @@ jobs:
       - name: Build react project to static files
         run: |
           cd /home/yany/wb-web-app
+          git checkout main
           yarn install
           yarn build
   deploy:
@@ -29,5 +30,4 @@ jobs:
     steps:
       - name: Restarting NGINX with new static files
         run: |
-          cd /home/yany/wb-web-app
           echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
