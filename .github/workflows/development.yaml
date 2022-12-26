@@ -30,5 +30,5 @@ jobs:
           sudo cp -R /home/${{ secrets.DEVSERVER_USERNAME }}/wb-web-app/build/* /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/webapps/ROOT
       - name: Restart tomcat
         run: |
-          sudo /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/bin/shutdown.sh
+          echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/bin/shutdown.sh
           sudo /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/bin/startup.sh
