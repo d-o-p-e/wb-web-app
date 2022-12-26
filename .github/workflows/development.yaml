@@ -4,22 +4,18 @@ on:
     branches:
       - "main"
 jobs:
-  update:
-    name: Update
+  build:
+    name: Build
     runs-on: self-hosted
     steps:
       - name: update local files
         run: |
-          cd /home/yany/wb-web-app
+          cd /home/${{ secrets.DEVSERVER_USERNAME }}/wb-web-app
           git pull
-  build:
-    needs: update
-    name: Build
-    runs-on: self-hosted
-    steps:
       - name: Build react project to static files
         run: |
-          cd /home/yany/wb-web-app
+          cd /home/${{ secrets.DEVSERVER_USERNAME }}/wb-web-app
+          git checkout main
           yarn install
           yarn build
   deploy:
@@ -27,7 +23,12 @@ jobs:
     name: Deploy
     runs-on: self-hosted
     steps:
-      - name: Restarting NGINX with new static files
+      - name: Copy the build product to ROOT of tomcat webapps routes
         run: |
-          cd /home/yany/wb-web-app
-          echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S systemctl restart nginx
+          echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S rm -rf /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/webapps/ROOT
+          sudo mkdir /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/webapps/ROOT
+          sudo cp -R /home/${{ secrets.DEVSERVER_USERNAME }}/wb-web-app/build/* /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/webapps/ROOT
+      - name: Restart tomcat
+        run: |
+          echo ${{ secrets.DEVSERVER_PASSWORD }} | sudo -S /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/bin/shutdown.sh
+          sudo /home/${{ secrets.DEVSERVER_USERNAME }}/tomcat/bin/startup.sh

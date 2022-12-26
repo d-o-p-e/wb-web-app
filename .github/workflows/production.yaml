@@ -1,0 +1,52 @@
+name: Build Production Web App
+on: 
+  workflow_dispatch
+  pull_request:
+    types:
+    - closed
+    branches:
+    - production
+jobs:
+  if_merged:
+    name: Check if the pull request was merged
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    steps:
+      run: |
+        echo "PR WAS MERGED TO PRODUCTION. START DEPLOYMENT."
+  build:
+    needs: if-merged
+    name: Build
+    runs-on: self-hosted
+    steps:
+      - name: update local files
+        run: |
+          cd /home/yany/wb-web-app
+          git pull
+      - name: Build react project to static files
+        run: |
+          cd /home/yany/wb-web-app
+          git checkout production
+          yarn install
+          yarn build
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: self-hosted
+    steps:
+      - name: Send build results to Production Server in Cafe24.
+        run: |
+          scp -r /Users/yanychoi/dev/wb-web-app/build/* woojin87872@woojin87872.cafe24.com:/woojin87872/ROOT
+      - name: Access the Production Server and modify the files
+        run: |
+          sshpass -p ${{ secrets.PRODSERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.PRODSERVER_USERNAME }}@${{ secrets.PRODSERVER_HOST }}
+          rm -rf /${{ secrets.PRODSERVER_USERNAME }}/tomcat/webapps/ROOT
+          mv /${{ secrets.PRODSERVER_USERNAME }}/ROOT /${{ secrets.PRODSERVER_USERNAME }}/tomcat/webapps/ROOT
+      - name: Finalize Deployment Process
+        run: |
+          /${{ secrets.PRODSERVER_USERNAME }}/tomcat/bin/shutdown.sh
+          /${{ secrets.PRODSERVER_USERNAME }}/tomcat/bin/startup.sh
+          mkdir /${{ secrets.PRODSERVER_USERNAME }}/ROOT
+          exit
+
+          
