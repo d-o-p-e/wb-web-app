@@ -40,7 +40,8 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
-        server: ${{ secrets.PRODSERVER_HOST }}/tomcat/webapps/ROOT
+        server: ${{ secrets.PRODSERVER_HOST }}
         username: ${{ secrets.PRODSERVER_USERNAME }}
         password: ${{ secrets.PRODSERVER_PASSWORD }}
         local-dir: /home/${{ secrets.DEVSERVER_USERNAME }}/wb-web-app/build/
+        server-dir: ./tomcat/webapps/ROOT/
