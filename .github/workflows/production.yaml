@@ -31,22 +31,16 @@ jobs:
           yarn build
   deploy:
     needs: build
-    name: Deploy
+    name: 🎉 Deploy
     runs-on: self-hosted
     steps:
-      - name: Send build results to Production Server in Cafe24.
-        run: |
-          sshpass -p ${{ secrets.PRODSERVER_PASSWORD }} scp -P 22 -r /home/${{ secrets.PRODSERVER_PASSWORD }}/wb-web-app/build/* ${{ secrets.PRODSERVER_USERNAME }}@${{ secrets.PRODSERVER_HOST }}:/${{ secrets.PRODSERVER_USERNAME }}/ROOT
-      - name: Access the Production Server and modify the files
-        run: |
-          sshpass -p ${{ secrets.PRODSERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.PRODSERVER_USERNAME }}@${{ secrets.PRODSERVER_HOST }}
-          rm -rf /${{ secrets.PRODSERVER_USERNAME }}/tomcat/webapps/ROOT
-          mv /${{ secrets.PRODSERVER_USERNAME }}/ROOT /${{ secrets.PRODSERVER_USERNAME }}/tomcat/webapps/ROOT
-      - name: Finalize Deployment Process
-        run: |
-          /${{ secrets.PRODSERVER_USERNAME }}/tomcat/bin/shutdown.sh
-          /${{ secrets.PRODSERVER_USERNAME }}/tomcat/bin/startup.sh
-          mkdir /${{ secrets.PRODSERVER_USERNAME }}/ROOT
-          exit
-
-          
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2
+    
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.3
+      with:
+        server: ${{ secrets.PRODSERVER_HOST }}/tomcat/webapps/ROOT
+        username: ${{ secrets.PRODSERVER_USERNAME }}
+        password: ${{ secrets.PRODSERVER_PASSWORD }}
+        local-dir: /home/${{ secrets.DEVSERVER_USERNAME }}/wb-web-app/build/
