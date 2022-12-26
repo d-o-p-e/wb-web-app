@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Send build results to Production Server in Cafe24.
         run: |
-          scp -P 22 -r /home/${{ secrets.PRODSERVER_PASSWORD }}/wb-web-app/build/* ${{ secrets.PRODSERVER_USERNAME }}@${{ secrets.PRODSERVER_HOST }}:/${{ secrets.PRODSERVER_USERNAME }}/ROOT
+          sshpass -p ${{ secrets.PRODSERVER_PASSWORD }} scp -P 22 -r /home/${{ secrets.PRODSERVER_PASSWORD }}/wb-web-app/build/* ${{ secrets.PRODSERVER_USERNAME }}@${{ secrets.PRODSERVER_HOST }}:/${{ secrets.PRODSERVER_USERNAME }}/ROOT
       - name: Access the Production Server and modify the files
         run: |
           sshpass -p ${{ secrets.PRODSERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.PRODSERVER_USERNAME }}@${{ secrets.PRODSERVER_HOST }}
