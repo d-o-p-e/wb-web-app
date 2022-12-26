@@ -45,3 +45,4 @@ jobs:
         password: ${{ secrets.PRODSERVER_PASSWORD }}
         local-dir: /home/${{ secrets.DEVSERVER_USERNAME }}/wb-web-app/build/
         server-dir: ./tomcat/webapps/ROOT/
+        dangerous-clean-slate: true
