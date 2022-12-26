@@ -1,6 +1,5 @@
 name: Build Production Web App
 on: 
-  workflow_dispatch:
   pull_request:
     types:
     - closed
