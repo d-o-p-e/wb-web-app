@@ -15,7 +15,7 @@ jobs:
         run: |
           echo "PR WAS MERGED TO PRODUCTION. START DEPLOYMENT."
   build:
-    needs: if-merged
+    needs: if_merged
     name: Build
     runs-on: self-hosted
     steps:
