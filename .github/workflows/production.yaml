@@ -11,8 +11,9 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: self-hosted
     steps:
-      run: |
-        echo "PR WAS MERGED TO PRODUCTION. START DEPLOYMENT."
+      - name: Check if PR was merged.
+        run: |
+          echo "PR WAS MERGED TO PRODUCTION. START DEPLOYMENT."
   build:
     needs: if-merged
     name: Build
